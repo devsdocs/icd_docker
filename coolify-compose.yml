@@ -10,6 +10,6 @@ services:
     restart: always
 
   icd10-api:
-    image: ghcr.io/dot-base/icd-10-api:latest
+    image: ghcr.io/dot-base/icd-10-api:6.0.0
     # Coolify will automatically map your domains to the internal port 8080 of this container
     restart: always
