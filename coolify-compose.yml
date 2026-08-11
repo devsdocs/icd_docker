@@ -42,13 +42,13 @@ services:
           }
       }
       " > /etc/nginx/conf.d/default.conf &&
-      /docker-entrypoint.sh nginx -g "daemon off;"'
+      nginx -g "daemon off;"'
     restart: always
     depends_on:
       - icd11-api
       - icd10-api
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost/health > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -62,19 +62,19 @@ services:
       - saveAnalytics=true
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "curl -sS -f http://localhost/ct11 > /dev/null || wget -q --spider http://localhost/ct11 || exit 1"]
+      test: ["CMD-SHELL", "curl -sS -f http://localhost/ct11 > /dev/null || wget -qO- http://localhost/ct11 > /dev/null || exit 1"]
       interval: 30s
       timeout: 20s
       retries: 3
-      start_period: 30s
+      start_period: 300s
 
   # 3. Community ICD-10 API
   icd10-api:
     image: ghcr.io/dot-base/icd-10-api:6.0.0
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "curl -sS -f http://localhost:3000/api/icd10?search=cholera > /dev/null || wget -q --spider http://localhost:3000/api/icd10?search=cholera || exit 1"]
+      test: ["CMD-SHELL", "curl -sS -f http://localhost:3000/api/icd10?search=cholera > /dev/null || wget -qO- http://localhost:3000/api/icd10?search=cholera > /dev/null || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 10s
+      start_period: 30s
