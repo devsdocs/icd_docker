@@ -12,8 +12,13 @@ This repository provides Docker configurations to host both ICD-11 and ICD-10 AP
 Neither of these containers natively supports simple API token authentication. To secure them, this repository includes an Nginx `api-gateway`. 
 
 All traffic must pass through this gateway. The gateway checks if a `?token=` parameter is present in the URL.
-* If the token is missing or incorrect, it returns a `403 Forbidden`.
-* If the token is correct, it routes the traffic to the appropriate ICD API based on the domain you requested.
+* If the token is missing or incorrect, it returns a standard `403 Forbidden`.
+* If the token is correct, it routes the traffic to the appropriate ICD API and **injects a secure browser cookie** (`icd_token`) that lasts for 1 year.
+
+**Why cookies?**
+The WHO graphical tools (like `/browse11`) are full web applications that use internal redirects and background AJAX requests. These background requests do not automatically append the `?token=` parameter, which would normally cause them to be blocked. By injecting a cookie on your first successful visit, all subsequent redirects and background requests from your browser are automatically authenticated! 
+
+*Note: If you are making programmatic API calls (e.g. using `curl` or Python), you can simply append `?token=YOUR_TOKEN` to every single request. The gateway will authenticate the URL parameter every time without requiring you to manage a cookie session.*
 
 **To configure the Gateway:**
 The API token and domains are configurable entirely via environment variables. In your deployment (like Coolify), you **must** set the following environment variables on the `api-gateway` service:
