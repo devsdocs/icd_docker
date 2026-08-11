@@ -15,8 +15,8 @@ All traffic must pass through this gateway. The gateway checks if a `?token=` pa
 * If the token is missing or incorrect, it returns a `403 Forbidden`.
 * If the token is correct, it routes the traffic to the appropriate ICD API based on the domain you requested.
 
-**To change your secret token:**
-Open `nginx.conf` and change the string `"mysecret"` in both `server` blocks to a secure password of your choosing.
+**To manage your secret token:**
+The API token and domains are configurable entirely via environment variables. By default, the guard is **enabled**. You can disable it completely by setting `REQUIRE_TOKEN=false`.
 
 ---
 
