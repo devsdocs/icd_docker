@@ -43,6 +43,7 @@ Because the API Gateway configuration is built directly into the Docker Compose 
      * `ICD11_DOMAIN` = (e.g., `icd11.yourdomain.com`)
      * `ICD10_DOMAIN` = (e.g., `icd10.yourdomain.com`)
      * `API_TOKEN` = (e.g., `mysecret`)
+     * `REQUIRE_TOKEN` = `true` (Set to `false` if you want to temporarily disable the guard)
    * Restart the `api-gateway` service to apply the variables.
 
 *Note: The ICD-11 container requires significant memory to load the classification database. Ensure your server has at least 4GB to 8GB of free RAM to prevent out-of-memory (OOM) crashes.*
