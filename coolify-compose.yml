@@ -5,17 +5,39 @@ services:
   api-gateway:
     image: nginx:alpine
     environment:
-      # Coolify users: Change these in your Environment Variables tab!
       - API_TOKEN=${API_TOKEN:-mysecret}
       - ICD11_DOMAIN=${ICD11_DOMAIN:-icd11.example.com}
       - ICD10_DOMAIN=${ICD10_DOMAIN:-icd10.example.com}
-    volumes:
-      - ./default.conf.template:/etc/nginx/templates/default.conf.template:ro
+    # This command writes the configuration dynamically so no external files are needed!
+    command: >
+      /bin/sh -c '
+      echo "
+      server {
+          listen 80;
+          server_name $${ICD11_DOMAIN};
+          location / {
+              if (\$$arg_token != \"$${API_TOKEN}\") {
+                  return 403 \"Forbidden: Invalid or missing ?token= parameter\n\";
+              }
+              proxy_pass http://icd11-api:80;
+          }
+      }
+      server {
+          listen 80;
+          server_name $${ICD10_DOMAIN};
+          location / {
+              if (\$$arg_token != \"$${API_TOKEN}\") {
+                  return 403 \"Forbidden: Invalid or missing ?token= parameter\n\";
+              }
+              proxy_pass http://icd10-api:3000;
+          }
+      }
+      " > /etc/nginx/templates/default.conf.template &&
+      /docker-entrypoint.sh nginx -g "daemon off;"'
     restart: always
     depends_on:
       - icd11-api
       - icd10-api
-    # In Coolify, map BOTH of your domains to THIS container on port 80.
 
   # 2. Official WHO ICD-11 API
   icd11-api:

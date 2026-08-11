@@ -22,10 +22,10 @@ Open `nginx.conf` and change the string `"mysecret"` in both `server` blocks to 
 
 ## 🚀 Option 1: Deployment via Coolify
 
-Because the API Gateway requires the external `nginx.conf` file, **you must deploy this stack in Coolify by connecting it to this Git repository** (you can no longer use the "Raw Text" deployment).
+Because the API Gateway configuration is built directly into the Docker Compose file, you can deploy this seamlessly using Coolify's **Raw Text** feature or via a linked Git repository.
 
-1. In your Coolify dashboard, create a new resource and choose **Docker Compose (from Git)** or link your repository directly.
-2. Select the `coolify-compose.yml` file as your Compose file.
+1. In your Coolify dashboard, create a new resource and choose **Docker Compose**.
+2. Paste the contents of `coolify-compose.yml` into the text box (or select it from your Git repo).
 3. Click **Deploy**.
 4. Once deployed, configure the domains in the Coolify UI:
    * Navigate to the **`api-gateway`** service.
