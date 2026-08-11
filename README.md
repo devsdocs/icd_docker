@@ -34,9 +34,16 @@ Because the API Gateway configuration is built directly into the Docker Compose 
 3. Click **Deploy**.
 4. Once deployed, configure the domains in the Coolify UI:
    * Navigate to the **`api-gateway`** service.
-   * Add **BOTH** of your domains here (e.g., `https://icd10.yourdomain.com, https://icd11.yourdomain.com`).
+   * Add **BOTH** of your domains under the "Domains" section (e.g., `https://icd10.yourdomain.com, https://icd11.yourdomain.com`).
    * Make sure the internal port for the `api-gateway` is set to **`80`**.
    * *(Do not map any domains to the `icd10-api` or `icd11-api` services directly. They should remain hidden from the outside world.)*
+5. Configure the Environment Variables:
+   * Still within the **`api-gateway`** service in Coolify, open the **Environment Variables** tab.
+   * Add the following variables:
+     * `ICD11_DOMAIN` = (e.g., `icd11.yourdomain.com`)
+     * `ICD10_DOMAIN` = (e.g., `icd10.yourdomain.com`)
+     * `API_TOKEN` = (e.g., `mysecret`)
+   * Restart the `api-gateway` service to apply the variables.
 
 *Note: The ICD-11 container requires significant memory to load the classification database. Ensure your server has at least 4GB to 8GB of free RAM to prevent out-of-memory (OOM) crashes.*
 
