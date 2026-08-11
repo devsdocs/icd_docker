@@ -13,6 +13,15 @@ services:
       /bin/sh -c '
       echo "
       server {
+          listen 80 default_server;
+          location /health {
+              return 200 \"healthy\n\";
+          }
+          location / {
+              return 403 \"Forbidden: Unknown Domain\n\";
+          }
+      }
+      server {
           listen 80;
           server_name $${ICD11_DOMAIN};
           location / {
@@ -38,6 +47,12 @@ services:
     depends_on:
       - icd11-api
       - icd10-api
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
 
   # 2. Official WHO ICD-11 API
   icd11-api:
@@ -46,8 +61,20 @@ services:
       - acceptLicense=true
       - saveAnalytics=true
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sS -f http://localhost/ct11 > /dev/null || wget -q --spider http://localhost/ct11 || exit 1"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 30s
 
   # 3. Community ICD-10 API
   icd10-api:
     image: ghcr.io/dot-base/icd-10-api:6.0.0
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sS -f http://localhost:3000/api/icd10?search=cholera > /dev/null || wget -q --spider http://localhost:3000/api/icd10?search=cholera || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
