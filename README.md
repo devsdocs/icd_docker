@@ -15,8 +15,13 @@ All traffic must pass through this gateway. The gateway checks if a `?token=` pa
 * If the token is missing or incorrect, it returns a `403 Forbidden`.
 * If the token is correct, it routes the traffic to the appropriate ICD API based on the domain you requested.
 
-**To manage your secret token:**
-The API token and domains are configurable entirely via environment variables. By default, the guard is **enabled**. You can disable it completely by setting `REQUIRE_TOKEN=false`.
+**To configure the Gateway:**
+The API token and domains are configurable entirely via environment variables. In your deployment (like Coolify), you **must** set the following environment variables on the `api-gateway` service:
+* `ICD11_DOMAIN`: Your ICD-11 domain (e.g., `icd11.yourdomain.com`)
+* `ICD10_DOMAIN`: Your ICD-10 domain (e.g., `icd10.yourdomain.com`)
+* `API_TOKEN`: Your secret password (defaults to `mysecret`)
+
+By default, the token guard is enabled. You can disable it completely by adding `REQUIRE_TOKEN=false` to your environment variables.
 
 ---
 
