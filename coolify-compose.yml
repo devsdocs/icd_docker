@@ -24,9 +24,18 @@ services:
           listen 80;
           server_name ${ICD11_DOMAIN};
           location / {
-              if ($$arg_token != \"${API_TOKEN}\") {
+              set $$auth 0;
+              if ($$cookie_icd_token = \"${API_TOKEN}\") {
+                  set $$auth 1;
+              }
+              if ($$arg_token = \"${API_TOKEN}\") {
+                  set $$auth 1;
+              }
+              if ($$auth = 0) {
                   return 403 \"Forbidden\";
               }
+              
+              add_header Set-Cookie \"icd_token=${API_TOKEN}; Path=/; Max-Age=31536000; SameSite=Lax\" always;
               proxy_pass http://icd11-api:80;
           }
       }
@@ -34,9 +43,18 @@ services:
           listen 80;
           server_name ${ICD10_DOMAIN};
           location / {
-              if ($$arg_token != \"${API_TOKEN}\") {
+              set $$auth 0;
+              if ($$cookie_icd_token = \"${API_TOKEN}\") {
+                  set $$auth 1;
+              }
+              if ($$arg_token = \"${API_TOKEN}\") {
+                  set $$auth 1;
+              }
+              if ($$auth = 0) {
                   return 403 \"Forbidden\";
               }
+              
+              add_header Set-Cookie \"icd_token=${API_TOKEN}; Path=/; Max-Age=31536000; SameSite=Lax\" always;
               proxy_pass http://icd10-api:3000;
           }
       }' > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
