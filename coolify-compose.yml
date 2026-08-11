@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  icd11-api:
+    image: whoicd/icd-api:latest
+    environment:
+      - acceptLicense=true
+      - saveAnalytics=true
+    # Coolify will automatically map your domains to the internal port 80 of this container
+    restart: always
+
+  icd10-api:
+    image: ghcr.io/dot-base/icd-10-api:latest
+    # Coolify will automatically map your domains to the internal port 8080 of this container
+    restart: always
