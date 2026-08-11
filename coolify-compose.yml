@@ -1,15 +1,31 @@
 version: '3.8'
 
 services:
+  # 1. Nginx API Gateway (Handles the ?token= guard)
+  api-gateway:
+    image: nginx:alpine
+    environment:
+      # Coolify users: Change these in your Environment Variables tab!
+      - API_TOKEN=${API_TOKEN:-mysecret}
+      - ICD11_DOMAIN=${ICD11_DOMAIN:-icd11.example.com}
+      - ICD10_DOMAIN=${ICD10_DOMAIN:-icd10.example.com}
+    volumes:
+      - ./default.conf.template:/etc/nginx/templates/default.conf.template:ro
+    restart: always
+    depends_on:
+      - icd11-api
+      - icd10-api
+    # In Coolify, map BOTH of your domains to THIS container on port 80.
+
+  # 2. Official WHO ICD-11 API
   icd11-api:
     image: whoicd/icd-api:latest
     environment:
       - acceptLicense=true
       - saveAnalytics=true
-    # Coolify will automatically map your domains to the internal port 80 of this container
     restart: always
 
+  # 3. Community ICD-10 API
   icd10-api:
     image: ghcr.io/dot-base/icd-10-api:6.0.0
-    # Coolify will automatically map your domains to the internal port 8080 of this container
     restart: always

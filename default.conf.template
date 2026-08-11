@@ -1,0 +1,41 @@
+# Default catch-all
+server {
+    listen 80 default_server;
+    return 403 "Forbidden: Unknown Domain\n";
+}
+
+# ICD-11 API Route
+server {
+    listen 80;
+    server_name ${ICD11_DOMAIN};
+
+    location / {
+        # Check for the token query parameter
+        if ($arg_token != "${API_TOKEN}") {
+            return 403 "Forbidden: Invalid or missing ?token= parameter\n";
+        }
+        
+        proxy_pass http://icd11-api:80;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+# ICD-10 API Route
+server {
+    listen 80;
+    server_name ${ICD10_DOMAIN};
+
+    location / {
+        # Check for the token query parameter
+        if ($arg_token != "${API_TOKEN}") {
+            return 403 "Forbidden: Invalid or missing ?token= parameter\n";
+        }
+        
+        proxy_pass http://icd10-api:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
