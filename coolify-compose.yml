@@ -22,9 +22,9 @@ services:
                   set $$auth 1;
               }
               if ($$auth = 0) {
-                  return 403 \"Forbidden\";
+                  return 403;
               }
-              add_header Set-Cookie \"icd_token=${API_TOKEN}; Path=/; Max-Age=31536000; SameSite=Lax\" always;
+              add_header Set-Cookie \"icd_token=${API_TOKEN}; Path=/; Max-Age=31536000; SameSite=Lax\";
           '
       else
           AUTH_LOGIC=''
@@ -37,7 +37,7 @@ services:
               return 200 \"healthy\";
           }
           location / {
-              return 403 \"Forbidden\";
+              return 403;
           }
       }
       server {
